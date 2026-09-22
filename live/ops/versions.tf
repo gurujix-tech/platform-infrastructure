@@ -19,9 +19,8 @@ provider "aws" {
     tags = {
       Project     = "gurujix"
       ManagedBy   = "terraform"
-      Component   = "ops"
       Owner       = "platform"
-      Environment = "ops"
+      Environment = "learning"
     }
   }
 }
