@@ -22,7 +22,7 @@ provider "aws" {
       ManagedBy   = "terraform"
       Component   = "tfstate"
       Owner       = "platform"
-      Environment = "ops"
+      Environment = "learning"
     }
   }
 }

@@ -6,14 +6,14 @@
 2. Destroy **cluster / network** stacks.
 3. Leave **bootstrap** (state bucket) until you are sure you will not apply again.
 
-## Destroy live/ops (smoke stack)
+## Destroy live/ops (VPC + later resources)
 
 ```sh
 cd live/ops
 terraform destroy
 ```
 
-This only removes whatever `live/ops` manages (today: nothing billable beyond API calls).
+Removes the platform VPC (and NAT if you enabled it). If NAT was on, destroy promptly when idle — that is the main hourly cost before EKS.
 
 ## Destroy bootstrap (rare)
 

@@ -9,9 +9,9 @@ Terraform for Gurujix AWS / shared cloud infrastructure (Phase 8).
 
 | Slice | Focus |
 | --- | --- |
-| **8a** (this) | Repo layout + **remote state** bootstrap (S3 + native lockfile) |
-| **8b** | Network (VPC) |
-| **8c** | EKS (or justified runtime) |
+| **8a** | Repo layout + **remote state** bootstrap (S3 + native lockfile) — done |
+| **8b** | Network (VPC) — 2 AZ public/private, NAT optional — done |
+| **8c** (next) | EKS (or justified runtime) |
 | **8d** | ECR + GitHub OIDC + IAM least privilege |
 | **8e** | DNS/TLS for `platform.gurujix.com` / `app.gurujix.com` when ready |
 
@@ -53,14 +53,32 @@ terraform init -backend-config=backend.hcl
 terraform plan
 ```
 
-`live/ops` starts as a **smoke stack** (`aws_caller_identity` only) so you can prove remote state without spending on VPC/EKS yet.
-
 State locking uses **S3 native lockfiles** (`use_lockfile = true`) — no DynamoDB lock table.
+
+## 8b — VPC (DIY)
+
+After remote state works:
+
+```sh
+cd live/ops
+terraform plan
+terraform apply
+terraform output
+```
+
+Creates a small **2-AZ** VPC (`10.42.0.0/16`) with public + private subnets and an IGW.  
+**NAT Gateway is off by default** (hourly cost). Turn on when private workloads need egress:
+
+```sh
+terraform apply -var='enable_nat_gateway=true'
+```
+
+Details: `docs/vpc.md`.
 
 ## Cost guardrails
 
 - Prefer **us-east-1** single-region learning footprint.
-- Destroy nonessential stacks when idle (see `docs/destroy.md`).
+- Leave `enable_nat_gateway=false` until you need it; destroy when idle (`docs/destroy.md`).
 - Enable billing alarms in the AWS console (or later Terraform) before EKS.
 - Tag everything with `Project=gurujix` / `ManagedBy=terraform`.
 
