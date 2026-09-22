@@ -25,3 +25,20 @@ output "private_subnet_ids" {
 output "nat_gateway_enabled" {
   value = var.enable_nat_gateway
 }
+
+output "eks_cluster_name" {
+  value = var.enable_eks ? aws_eks_cluster.platform[0].name : null
+}
+
+output "eks_cluster_endpoint" {
+  value = var.enable_eks ? aws_eks_cluster.platform[0].endpoint : null
+}
+
+output "eks_configure_kubectl" {
+  description = "Run locally after apply to talk to the cluster."
+  value = var.enable_eks ? format(
+    "aws eks update-kubeconfig --region %s --name %s",
+    data.aws_region.current.name,
+    aws_eks_cluster.platform[0].name,
+  ) : null
+}

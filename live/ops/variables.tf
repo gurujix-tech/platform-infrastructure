@@ -30,3 +30,32 @@ variable "enable_nat_gateway" {
   type        = bool
   default     = false
 }
+
+variable "enable_eks" {
+  description = "Create the learning EKS cluster + node group. Set false to tear down compute while keeping the VPC."
+  type        = bool
+  default     = true
+}
+
+variable "eks_version" {
+  description = "Kubernetes version for the EKS control plane and node group."
+  type        = string
+  default     = "1.36"
+}
+
+variable "eks_node_instance_types" {
+  description = "EC2 instance types for the managed node group."
+  type        = list(string)
+  default     = ["t3.medium"]
+}
+
+variable "eks_node_desired_size" {
+  description = "Desired node count (min matches this; max is desired+1)."
+  type        = number
+  default     = 1
+
+  validation {
+    condition     = var.eks_node_desired_size >= 1 && var.eks_node_desired_size <= 3
+    error_message = "eks_node_desired_size must be between 1 and 3 for the learning footprint."
+  }
+}

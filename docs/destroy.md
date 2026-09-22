@@ -1,19 +1,25 @@
 # Destroy / teardown (cost control)
 
-## Safe order (later, when VPC/EKS exist)
+## Safe order
 
-1. Drain / destroy **workload** stacks first (EKS node groups, load balancers).
-2. Destroy **cluster / network** stacks.
+1. Disable/destroy **EKS** first (`terraform apply -var='enable_eks=false'` or full destroy).
+2. Then VPC / remaining `live/ops` resources.
 3. Leave **bootstrap** (state bucket) until you are sure you will not apply again.
 
-## Destroy live/ops (VPC + later resources)
+## Destroy live/ops
 
 ```sh
 cd live/ops
 terraform destroy
 ```
 
-Removes the platform VPC (and NAT if you enabled it). If NAT was on, destroy promptly when idle — that is the main hourly cost before EKS.
+Or keep the VPC and only drop compute:
+
+```sh
+terraform apply -var='enable_eks=false'
+```
+
+EKS control plane is ~$0.10/hr — do not leave it idle overnight without intent.
 
 ## Destroy bootstrap (rare)
 

@@ -11,7 +11,7 @@ Terraform for Gurujix AWS / shared cloud infrastructure (Phase 8).
 | --- | --- |
 | **8a** | Repo layout + **remote state** bootstrap (S3 + native lockfile) — done |
 | **8b** | Network (VPC) — 2 AZ public/private, NAT optional — done |
-| **8c** (next) | EKS (or justified runtime) |
+| **8c** (this) | EKS — small managed node group (public subnets, no NAT) |
 | **8d** | ECR + GitHub OIDC + IAM least privilege |
 | **8e** | DNS/TLS for `platform.gurujix.com` / `app.gurujix.com` when ready |
 
@@ -75,11 +75,26 @@ terraform apply -var='enable_nat_gateway=true'
 
 Details: `docs/vpc.md`.
 
+## 8c — EKS (DIY)
+
+**Cost:** EKS control plane ~$0.10/hr plus the node. Destroy or set `enable_eks=false` when idle.
+
+```sh
+cd live/ops
+terraform plan
+terraform apply
+terraform output eks_configure_kubectl
+# then: aws eks update-kubeconfig --region us-east-1 --name gurujix-platform
+kubectl get nodes
+```
+
+Learning defaults: 1× `t3.medium` in **public** subnets (works with NAT off). Details: `docs/eks.md`.
+
 ## Cost guardrails
 
 - Prefer **us-east-1** single-region learning footprint.
-- Leave `enable_nat_gateway=false` until you need it; destroy when idle (`docs/destroy.md`).
-- Enable billing alarms in the AWS console (or later Terraform) before EKS.
+- Leave `enable_nat_gateway=false` until you need it; destroy EKS when idle (`docs/destroy.md` / `enable_eks=false`).
+- Enable billing alarms in the AWS console before leaving clusters running overnight.
 - Tag everything with `Project=gurujix` / `ManagedBy=terraform`.
 
 ## Safety
