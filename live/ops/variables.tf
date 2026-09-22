@@ -59,3 +59,23 @@ variable "eks_node_desired_size" {
     error_message = "eks_node_desired_size must be between 1 and 3 for the learning footprint."
   }
 }
+
+variable "ecr_repositories" {
+  description = "ECR repository names (match service CI ECR_REPOSITORY)."
+  type        = list(string)
+  default     = ["service-orders"]
+}
+
+variable "create_github_oidc_provider" {
+  description = "true = create the account GitHub OIDC provider; false = use the existing one (default for this account)."
+  type        = bool
+  default     = false
+}
+
+variable "github_oidc_subjects" {
+  description = "Allowed GitHub Actions token.sub values (must match the real JWT sub for this org)."
+  type        = list(string)
+  default = [
+    "repo:gurujix-tech@299745487/service-orders@1358132490:ref:refs/heads/main",
+  ]
+}

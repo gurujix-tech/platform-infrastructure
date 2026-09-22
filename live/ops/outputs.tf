@@ -42,3 +42,12 @@ output "eks_configure_kubectl" {
     aws_eks_cluster.platform[0].name,
   ) : null
 }
+
+output "ecr_repository_urls" {
+  value = { for name, repo in aws_ecr_repository.services : name => repo.repository_url }
+}
+
+output "github_actions_role_arn" {
+  description = "Set as GitHub repo secret AWS_ROLE_ARN on service-orders."
+  value       = aws_iam_role.github_actions_ecr.arn
+}
