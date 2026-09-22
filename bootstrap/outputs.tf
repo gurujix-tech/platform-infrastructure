@@ -12,18 +12,13 @@ output "state_bucket_name" {
   value       = aws_s3_bucket.tfstate.id
 }
 
-output "lock_table_name" {
-  description = "DynamoDB table for state locking — put this in live/ops/backend.hcl."
-  value       = aws_dynamodb_table.locks.name
-}
-
 output "backend_hcl_example" {
   description = "Paste into live/ops/backend.hcl after bootstrap."
   value       = <<-EOT
-    bucket         = "${aws_s3_bucket.tfstate.id}"
-    key            = "live/ops/terraform.tfstate"
-    region         = "${var.aws_region}"
-    dynamodb_table = "${aws_dynamodb_table.locks.name}"
-    encrypt        = true
+    bucket       = "${aws_s3_bucket.tfstate.id}"
+    key          = "live/ops/terraform.tfstate"
+    region       = "${var.aws_region}"
+    encrypt      = true
+    use_lockfile = true
   EOT
 }

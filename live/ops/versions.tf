@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 1.5.0"
+  required_version = ">= 1.10.0"
 
   required_providers {
     aws = {
@@ -17,9 +17,11 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Project   = "gurujix"
-      ManagedBy = "terraform"
-      Phase     = "8a-live-ops"
+      Project     = "gurujix"
+      ManagedBy   = "terraform"
+      Component   = "ops"
+      Owner       = "platform"
+      Environment = "ops"
     }
   }
 }

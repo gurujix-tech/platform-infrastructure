@@ -1,8 +1,10 @@
 # Copy to backend.hcl (gitignored) after bootstrap outputs are known.
 #   cp backend.hcl.example backend.hcl
+#
+# use_lockfile = true requires Terraform >= 1.10 (native S3 locking; no DynamoDB).
 
-bucket         = "REPLACE_WITH_bootstrap_state_bucket_name"
-key            = "live/ops/terraform.tfstate"
-region         = "us-east-1"
-dynamodb_table = "gurujix-terraform-locks"
-encrypt        = true
+bucket       = "REPLACE_WITH_bootstrap_state_bucket_name"
+key          = "live/ops/terraform.tfstate"
+region       = "us-east-1"
+encrypt      = true
+use_lockfile = true

@@ -1,13 +1,15 @@
-# Bootstrap → remote state (Phase 8a)
+# Bootstrap → remote state
 
 ## Why two folders?
 
 | Path | Backend | Job |
 | --- | --- | --- |
-| `bootstrap/` | **Local** `.tfstate` on your machine (gitignored) | Create the S3 bucket + DynamoDB lock table |
-| `live/ops/` | **Remote** S3 + lock | All future infra; state shared / locked |
+| `bootstrap/` | **Local** `.tfstate` on your machine (gitignored) | Create the S3 state bucket |
+| `live/ops/` | **Remote** S3 + `use_lockfile` | All future infra; state shared / locked |
 
 You cannot store Terraform state in a bucket that does not exist yet — hence bootstrap once.
+
+Locking: Terraform **>= 1.10** native S3 lockfile (no DynamoDB).
 
 ## Steps
 

@@ -9,7 +9,7 @@ Terraform for Gurujix AWS / shared cloud infrastructure (Phase 8).
 
 | Slice | Focus |
 | --- | --- |
-| **8a** (this) | Repo layout + **remote state** bootstrap (S3 + DynamoDB lock) |
+| **8a** (this) | Repo layout + **remote state** bootstrap (S3 + native lockfile) |
 | **8b** | Network (VPC) |
 | **8c** | EKS (or justified runtime) |
 | **8d** | ECR + GitHub OIDC + IAM least privilege |
@@ -18,16 +18,16 @@ Terraform for Gurujix AWS / shared cloud infrastructure (Phase 8).
 ## Layout
 
 ```text
-bootstrap/     # One-time: create state bucket + lock table (local state)
+bootstrap/     # One-time: create state bucket (local state)
 live/
-  ops/         # Day-2 root stack; uses remote backend after bootstrap
+  ops/         # Day-2 root stack; uses remote S3 backend after bootstrap
 docs/          # Create / destroy / cost notes
 ```
 
 ## Prerequisites
 
-- AWS account + IAM principal that can create S3/DynamoDB (bootstrap)
-- Terraform `>= 1.5`
+- AWS account + IAM principal that can create S3 (bootstrap)
+- Terraform `>= 1.10` (for S3 `use_lockfile` native locking)
 - `aws` CLI configured (`aws sts get-caller-identity` works)
 
 Default region for learning: **`us-east-1`** (override with `TF_VAR_aws_region` / `*.tfvars`).
@@ -48,12 +48,14 @@ Copy outputs into `live/ops/backend.hcl` (see `backend.hcl.example`).
 
 ```sh
 cd ../live/ops
-cp backend.hcl.example backend.hcl   # fill bucket / dynamodb_table / region
+cp backend.hcl.example backend.hcl   # fill bucket / region; keep use_lockfile = true
 terraform init -backend-config=backend.hcl
 terraform plan
 ```
 
 `live/ops` starts as a **smoke stack** (`aws_caller_identity` only) so you can prove remote state without spending on VPC/EKS yet.
+
+State locking uses **S3 native lockfiles** (`use_lockfile = true`) — no DynamoDB lock table.
 
 ## Cost guardrails
 
