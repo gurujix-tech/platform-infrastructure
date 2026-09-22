@@ -1,0 +1,25 @@
+# Local Terraform / editor noise — never commit state or the plugin cache.
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+tfplan
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraform.tfstate.lock.info
+
+# Generated / local backend configs (examples are committed).
+# Keep .terraform.lock.hcl committed for reproducible providers.
+backend.hcl
+*.auto.tfvars
+!*.auto.tfvars.example
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
