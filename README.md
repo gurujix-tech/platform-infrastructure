@@ -11,8 +11,8 @@ Terraform for Gurujix AWS / shared cloud infrastructure (Phase 8).
 | --- | --- |
 | **8a** | Repo layout + **remote state** bootstrap (S3 + native lockfile) — done |
 | **8b** | Network (VPC) — 2 AZ public/private, NAT optional — done |
-| **8c** (this) | EKS — small managed node group (public subnets, no NAT) |
-| **8d** | ECR + GitHub OIDC + IAM least privilege |
+| **8c** | EKS — small managed node group (public subnets, no NAT) — done |
+| **8d** (this) | ECR + GitHub OIDC + IAM least privilege |
 | **8e** | DNS/TLS for `platform.gurujix.com` / `app.gurujix.com` when ready |
 
 ## Layout
@@ -89,6 +89,18 @@ kubectl get nodes
 ```
 
 Learning defaults: 1× `t3.medium` in **public** subnets (works with NAT off). Details: `docs/eks.md`.
+
+## 8d — ECR + GitHub OIDC (DIY)
+
+Creates a new role `gurujix-github-actions-ecr` + ECR repos. Reuses the existing account OIDC provider (data source). If ECR `service-orders` already exists, delete it first — see `docs/ecr-oidc.md`.
+
+```sh
+cd live/ops
+terraform apply -var='enable_eks=false'
+terraform output -raw github_actions_role_arn
+```
+
+Update **service-orders** secret `AWS_ROLE_ARN` to the new ARN.
 
 ## Cost guardrails
 
