@@ -51,3 +51,32 @@ output "github_actions_role_arn" {
   description = "Set as GitHub repo secret AWS_ROLE_ARN on service-orders."
   value       = aws_iam_role.github_actions_ecr.arn
 }
+
+output "route53_zone_id" {
+  value = var.enable_dns ? aws_route53_zone.root[0].zone_id : null
+}
+
+output "route53_name_servers" {
+  description = "Only needed if you cut over apex DNS to Route53 (do not do this while remote.gurujix.com depends on GoDaddy)."
+  value       = var.enable_dns ? aws_route53_zone.root[0].name_servers : null
+}
+
+output "acm_certificate_arn" {
+  description = "Cert ARN (ISSUED after you add validation CNAMEs at GoDaddy)."
+  value       = var.enable_dns ? aws_acm_certificate.public[0].arn : null
+}
+
+output "acm_dns_validation_records" {
+  description = "Add these CNAMEs in GoDaddy DNS Management to finish ACM validation."
+  value = var.enable_dns ? {
+    for dvo in aws_acm_certificate.public[0].domain_validation_options : dvo.domain_name => {
+      name  = dvo.resource_record_name
+      type  = dvo.resource_record_type
+      value = dvo.resource_record_value
+    }
+  } : null
+}
+
+output "public_hostnames" {
+  value = var.enable_dns ? ["platform.${var.root_domain}", "app.${var.root_domain}"] : null
+}

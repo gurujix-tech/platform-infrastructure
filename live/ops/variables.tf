@@ -79,3 +79,15 @@ variable "github_oidc_subjects" {
     "repo:gurujix-tech@299745487/service-orders@1358132490:ref:refs/heads/main",
   ]
 }
+
+variable "enable_dns" {
+  description = "Create Route53 zone + ACM certs for platform/app hostnames (~$0.50/mo for the hosted zone)."
+  type        = bool
+  default     = true
+}
+
+variable "root_domain" {
+  description = "Apex domain (content hub). platform/app subdomains are issued under this zone."
+  type        = string
+  default     = "gurujix.com"
+}

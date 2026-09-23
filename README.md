@@ -12,8 +12,9 @@ Terraform for Gurujix AWS / shared cloud infrastructure (Phase 8).
 | **8a** | Repo layout + **remote state** bootstrap (S3 + native lockfile) — done |
 | **8b** | Network (VPC) — 2 AZ public/private, NAT optional — done |
 | **8c** | EKS — small managed node group (public subnets, no NAT) — done |
-| **8d** (this) | ECR + GitHub OIDC + IAM least privilege |
-| **8e** | DNS/TLS for `platform.gurujix.com` / `app.gurujix.com` when ready |
+| **8d** | ECR + GitHub OIDC + IAM least privilege — done |
+| **8e** | DNS/TLS for `platform.gurujix.com` / `app.gurujix.com` — ACM via GoDaddy (Issued when DNS validates) |
+| **Bridge** | Deploy `service-orders` to EKS from ECR (Helm; Argo on EKS later) |
 
 ## Layout
 
@@ -101,6 +102,24 @@ terraform output -raw github_actions_role_arn
 ```
 
 Update **service-orders** secret `AWS_ROLE_ARN` to the new ARN.
+
+## 8e — DNS / TLS (DIY)
+
+Creates a Route53 zone for `gurujix.com` + ACM cert for `platform` / `app` (~$0.50/mo for the zone).
+
+```sh
+cd live/ops
+terraform apply -var='enable_eks=false'
+terraform output route53_name_servers
+```
+
+You must point the **registrar NS** at those servers (or validation stays pending). Details / hub-site caution: `docs/dns-tls.md`.
+
+## Bridge — EKS deploy from ECR (DIY)
+
+After ACM is Issued (optional for this step), run the app on EKS:
+
+See `docs/eks-deploy.md` — Helm + `values-eks.yaml` + ECR image tag.
 
 ## Cost guardrails
 
