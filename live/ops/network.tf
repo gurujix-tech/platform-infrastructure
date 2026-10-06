@@ -16,8 +16,9 @@ resource "aws_vpc" "platform" {
   enable_dns_support   = true
 
   tags = {
-    Name      = local.name
-    Component = "network"
+    Name                                          = local.name
+    Component                                     = "network"
+    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
   }
 }
 
@@ -39,10 +40,11 @@ resource "aws_subnet" "public" {
   map_public_ip_on_launch = true
 
   tags = {
-    Name                     = "${local.name}-public-${local.azs[count.index]}"
-    Component                = "network"
-    Tier                     = "public"
-    "kubernetes.io/role/elb" = "1"
+    Name                                          = "${local.name}-public-${local.azs[count.index]}"
+    Component                                     = "network"
+    Tier                                          = "public"
+    "kubernetes.io/role/elb"                      = "1"
+    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
   }
 }
 
@@ -54,10 +56,11 @@ resource "aws_subnet" "private" {
   availability_zone = local.azs[count.index]
 
   tags = {
-    Name                              = "${local.name}-private-${local.azs[count.index]}"
-    Component                         = "network"
-    Tier                              = "private"
-    "kubernetes.io/role/internal-elb" = "1"
+    Name                                          = "${local.name}-private-${local.azs[count.index]}"
+    Component                                     = "network"
+    Tier                                          = "private"
+    "kubernetes.io/role/internal-elb"             = "1"
+    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
   }
 }
 

@@ -80,3 +80,13 @@ output "acm_dns_validation_records" {
 output "public_hostnames" {
   value = var.enable_dns ? ["platform.${var.root_domain}", "app.${var.root_domain}"] : null
 }
+
+output "eks_oidc_provider_arn" {
+  description = "IAM OIDC provider for this EKS cluster (IRSA)."
+  value       = var.enable_eks ? aws_iam_openid_connect_provider.eks[0].arn : null
+}
+
+output "alb_controller_role_arn" {
+  description = "Annotate aws-load-balancer-controller ServiceAccount with this ARN (IRSA)."
+  value       = var.enable_eks ? aws_iam_role.alb_controller[0].arn : null
+}
