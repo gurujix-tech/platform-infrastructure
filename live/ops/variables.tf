@@ -40,7 +40,7 @@ variable "enable_eks" {
 variable "eks_version" {
   description = "Kubernetes version for the EKS control plane and node group."
   type        = string
-  default     = "1.36"
+  default     = "1.37"
 }
 
 variable "eks_node_instance_types" {
